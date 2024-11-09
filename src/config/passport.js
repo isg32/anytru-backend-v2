@@ -39,7 +39,7 @@ const googleAuth = () => {
 			{
 				clientID: google.clientID,
 				clientSecret: google.clientSecret,
-				callbackURL: "/auth/google/callback",
+				callbackURL: google.callbackURL,
 				scope: ['profile', 'email'],
 			},
 			async (accessToken, refreshToken, profile, done) => {
@@ -49,7 +49,7 @@ const googleAuth = () => {
 						return done(null, user);
 					}
 
-				
+
 
 					const name = profile.displayName.split(' ');
 
