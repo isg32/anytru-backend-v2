@@ -6,7 +6,8 @@
 	"scripts": {
 		"swagger": "node swagger.js",
 		"dev": "nodemon server.js",
-		"start": "node server.js"
+		"start": "node server.js",
+		"build": "node server.js"
 	},
 	"keywords": [
 		"Node",
