@@ -2,12 +2,11 @@
 	"name": "api",
 	"version": "1.0.0",
 	"description": "This is AnyTru rest api",
-	"main": "server.js",
+	"main": "index.js",
 	"scripts": {
 		"swagger": "node swagger.js",
-		"dev": "nodemon server.js",
-		"start": "node server.js",
-		"build": "node server.js"
+		"dev": "nodemon index.js",
+		"start": "node index.js"
 	},
 	"keywords": [
 		"Node",
