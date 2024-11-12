@@ -3,7 +3,7 @@ const keys = require('../config/keys');
 
 class MailchimpService {
 	constructor() {
-		this.mailchimp = new Mailchimp(keys.mailchimp.key);
+		// this.mailchimp = new Mailchimp(keys.mailchimp.key);
 		this.listId = keys.mailchimp.listKey;
 	}
 

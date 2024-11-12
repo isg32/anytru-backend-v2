@@ -108,17 +108,17 @@ router.post(
 				return res.status(400).json({ error: 'That Brand Id is already in use.' });
 			}
 
-			// Upload PAN and GSTIN files to S3
-			const panFile = req.files['pan'] ? req.files['pan'][0] : null;
-			const gstinFile = req.files['gstin'] ? req.files['gstin'][0] : null;
+			// // Upload PAN and GSTIN files to S3
+			// const panFile = req.files['pan'] ? req.files['pan'][0] : null;
+			// const gstinFile = req.files['gstin'] ? req.files['gstin'][0] : null;
 
-			const panUpload = panFile ? await s3Upload(panFile) : null;
-			const gstinUpload = gstinFile ? await s3Upload(gstinFile) : null;
+			// const panUpload = panFile ? await s3Upload(panFile) : null;
+			// const gstinUpload = gstinFile ? await s3Upload(gstinFile) : null;
 
-			const panFileUrl = panUpload ? panUpload.imageUrl : null;
-			const gstinFileUrl = gstinUpload ? gstinUpload.imageUrl : null;
-			const panFileKey = panUpload ? panUpload.imageKey : null;
-			const gstinFileKey = gstinUpload ? gstinUpload.imageKey : null;
+			// const panFileUrl = panUpload ? panUpload.imageUrl : null;
+			// const gstinFileUrl = gstinUpload ? gstinUpload.imageUrl : null;
+			// const panFileKey = panUpload ? panUpload.imageKey : null;
+			// const gstinFileKey = gstinUpload ? gstinUpload.imageKey : null;
 
 			const merchant = new Merchant({
 				brandId,
@@ -126,10 +126,10 @@ router.post(
 				accNumber,
 				ifsc,
 				upi,
-				panFileUrl,
-				gstinFileUrl,
-				panFileKey,
-				gstinFileKey,
+				// panFileUrl,
+				// gstinFileUrl,
+				// panFileKey,
+				// gstinFileKey,
 				business,
 				// user: userId,
 				websiteUrl,

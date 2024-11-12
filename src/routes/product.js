@@ -241,7 +241,7 @@ router.get('/list', async (req, res) => {
 	try {
 		// Create a filter object based on query parameters
 		let filter = {
-			isActive: isAdmin && isActive === 'false' ? false : true
+			isActive: isAdmin && isActive === 'false' ? false : false
 		};
 
 		// Filter by category if provided
@@ -299,7 +299,7 @@ router.get('/list', async (req, res) => {
 		const [products, count] = await Promise.all([productsQuery.exec(), Product.countDocuments(filter)]);
 
 		// Prepare the response with product details
-		const productsWithLikes = products.map((product) => {
+		const productsWithLikes = products.map((product,index) => {
 			const totalLikes = product.likes.length;
 			const userLiked = product.likes.includes(userId);
 			const userIsFollowingProductUser = product.user.followers.includes(userId);
@@ -307,6 +307,7 @@ router.get('/list', async (req, res) => {
 			const isWishlisted = wishlistSet.has(product._id.toString());
 
 			return {
+				index: index,
 				_id: product._id,
 				sku: product.sku,
 				slug: product.slug,
@@ -361,7 +362,7 @@ router.get('/offers/list/:productId', async (req, res) => {
 		const productId = req.params.productId;
 
 		// Construct query based on isAdmin status and productId
-		const query = isAdmin ? { _id: productId } : { _id: productId, isActive: true };
+		const query = isAdmin ? { _id: productId } : { _id: productId, isActive: false };
 
 		// Find the product based on productId and query conditions
 		const product = await Product.findOne(query);
@@ -454,7 +455,7 @@ router.get('/offers/list/:productId', async (req, res) => {
 router.post('/add', auth, upload.single('image'), async (req, res) => {
 	try {
 
-		const { sku, name, description, tags, link, category, dispatchDay,  } = req.body;
+		const { sku, name, description, tags, link, category, dispatchDay,imageUrl } = req.body;
 		const userId = req.user._id;
 		const image = req.file;
 
@@ -494,7 +495,7 @@ router.post('/add', auth, upload.single('image'), async (req, res) => {
 		}
 
 		// Upload image to S3
-		const { imageUrl, imageKey } = await s3Upload(image);
+		// const { imageUrl, imageKey } = await s3Upload(image);
 
 		// Create product data
 		const data = {
@@ -504,7 +505,7 @@ router.post('/add', auth, upload.single('image'), async (req, res) => {
 			category: categoriesArray,
 			user: findUser._id,
 			imageUrl,
-			imageKey,
+			imageKey:123,
 			tags: Array.isArray(tags) ? tags : tags.split(',').map((tag) => tag.trim()),
 			link,
 			dispatchDay
@@ -625,7 +626,7 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', async (req, res) => {
 	try {
 		const productId = req.params.id;
-
+        
 		// Check authentication and role
 		const userDoc = await checkAuth(req);
 		const userId = userDoc?.id;
@@ -634,7 +635,7 @@ router.get('/:id', async (req, res) => {
 		// Create filter based on user role
 		const filter = { _id: productId };
 		if (!isAdmin) {
-			filter.isActive = true; // Non-admin users can only see active products
+			filter.isActive = false; // Non-admin users can only see active products
 		}
 
 		// Fetch the product and project the necessary fields
