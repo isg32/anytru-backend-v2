@@ -131,7 +131,7 @@ router.post(
 				// panFileKey,
 				// gstinFileKey,
 				business,
-				// user: userId,
+				//user: userId,
 				websiteUrl,
 				adharNumber,
 				user: findUser,
@@ -150,7 +150,7 @@ router.post(
 			findUser.merchantReq = merchantDoc;
 			await findUser.save();
 
-			await mailgun.sendEmail(findUser.email, 'merchant-application');
+			// await mailgun.sendEmail(findUser.email, 'merchant-application');
 
 			res.status(200).json({
 				success: true,
@@ -159,7 +159,7 @@ router.post(
 		} catch (error) {
 			console.log(error);
 			return res.status(500).json({
-				error: 'Your request could not be processed. Please try again.'
+				error: error.message
 			});
 		}
 	}

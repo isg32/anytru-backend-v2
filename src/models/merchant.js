@@ -28,22 +28,22 @@ const MerchantSchema = new Schema({
 	},
 	panFileUrl: {
 		type: String,
-		required: true,
+		required: false, // to be set to true
 		trim: true
 	},
 	gstinFileUrl: {
 		type: String,
-		required: true,
+		required: false, // to be set to true
 		trim: true
 	},
 	panFileKey: {
 		type: String,
-		required: true,
+		required: false, // to be set to true
 		trim: true
 	},
 	gstinFileKey: {
 		type: String,
-		required: true,
+		required: false, // to be set to true
 		trim: true
 	},
 	// name: {

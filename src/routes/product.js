@@ -377,10 +377,11 @@ router.get('/offers/list/:productId', async (req, res) => {
 		// Fetch vendor details for each offer asynchronously
 		const offersWithVendorDetails = await Promise.all(
 			offers.map(async (offer) => {
-				const vendor = await Vendor.findById(offer.vendor).populate('user', 'avatar'); // Assuming vendor has a 'user' field
-
+				const vendor = await Vendor.findById(offer.vendor).populate('user', 'avatar firstName lastName'); // Assuming vendor has a 'user' field
+                console.log(vendor.user);
 				return {
 					vendorId: vendor.vendorId,
+					vendorName: vendor.user.firstName +" "+ vendor.user.lastName,
 					vendorRating: vendor.rating,
 					vendorAddress: vendor.merchantAddress,
 					vendorIsActive: vendor.isActive,
@@ -969,14 +970,14 @@ router.post('/vendor/:productId/accept', auth, role.check(ROLES.Merchant), async
 	try {
 		const { pricePerProduct, dispatchDay, remark, material, description, standardDeliveryPrice, expediteDeliveryPrice } =
 			req.body;
-		if (!pricePerProduct || !dispatchDay || !remark || !material || !description || !standardDeliveryPrice || !expediteDeliveryPrice) {
+		if (!pricePerProduct || !dispatchDay || !remark || !material || !description) {
 			return res.status(401).json({ error: 'All fiels are required' });
 		}
 		const productId = req.params.productId;
 		const vendorId = req.user.vendor;
 
 		// Check if the ad exists
-		const product = await Product.findOne({ _id: productId, isActive: true });
+		const product = await Product.findOne({ _id: productId, isActive: false });
 		if (!product) {
 			return res.status(404).json({ error: 'Ad not found' });
 		}
