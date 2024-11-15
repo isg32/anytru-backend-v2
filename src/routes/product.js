@@ -476,9 +476,7 @@ router.post('/add', auth, upload.single('image'), async (req, res) => {
 			return res.status(400).json({ error: 'You must enter name.' });
 		}
 
-		if (!dispatchDay) {
-			return res.status(400).json({ error: 'You must enter dispatch days.' });
-		}
+
 
 		// Validate categories
 		const categoriesArray = Array.isArray(category) ? category : category.split(',').map((cat) => cat.trim());
@@ -509,7 +507,6 @@ router.post('/add', auth, upload.single('image'), async (req, res) => {
 			imageKey:123,
 			tags: Array.isArray(tags) ? tags : tags.split(',').map((tag) => tag.trim()),
 			link,
-			dispatchDay
 		};
 
 		// Save product to the database
