@@ -4,12 +4,16 @@ const NotificationService = require('./services/notificationService');
 const User = require('./models/User');
 
 const socketConfig = (io) => {
+
+	
 	io.on('connection', (socket) => {
 		console.log('a user connected');
 
 		socket.on('disconnect', () => {
 			console.log('user disconnected');
 		});
+
+
 
 		socket.on('joinRoom', ({ userId, room }) => {
 			socket.join(room);

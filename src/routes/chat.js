@@ -6,6 +6,7 @@ const User = require('../models/User');
 const auth = require('../middleware/auth');
 const Order = require('../models/Order');
 const { ORDER_ITEM_STATUS, ORDER_PAYMENT_STATUS } = require('../constants');
+const {socket} = require('../utils/socket');
 
 // Create a new chat or get chat of created user
 router.post('/:orderId', auth, async (req, res) => {

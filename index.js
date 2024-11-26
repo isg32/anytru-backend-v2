@@ -22,8 +22,13 @@ const swaggerDocument = require('./src/utils/swagger-output.json');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
-	pingTimeout: 60000 // Set pingTimeout to 1 minute
+	pingTimeout: 60000,
+	cors: {
+		origin: '*',
+	  }
 });
+
+
 
 const PORT = keys.port;
 
@@ -73,26 +78,78 @@ app.use('/reports', require('./src/routes/reports'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Socket.IO Middleware
-io.use((socket, next) => {
-	const token = socket.handshake.query.token?.split(' ')[1];
-	if (token) {
-		jwt.verify(token, keys.jwt.secret, (err, decoded) => {
-			if (err) return next(new Error('Authentication error'));
-			socket.user = decoded;
-			next();
-		});
-	} else {
-		next(new Error('Authentication error'));
-	}
-});
+// io.use((socket, next) => {
+// 	const token = socket.handshake.query.token?.split(' ')[1];
+// 	if (token) {
+// 		jwt.verify(token, keys.jwt.secret, (err, decoded) => {
+// 			if (err) return next(new Error('Authentication error'));
+// 			socket.user = decoded;
+// 			next();
+// 		});
+// 	} else {
+// 		next(new Error('Authentication error'));
+// 	}
+// });
 
 // Socket.IO Handlers
+
+// const Room = {
+// 	usersMoves: Map<string, Move[]>;
+// 	drawed: Move[];
+// 	users: Map<string, string>;
+//   };
+  
+
+const rooms = new Map();
+
+
 io.on('connection', (socket) => {
 	console.log('A user connected');
 
 	socket.on('disconnect', () => {
 		console.log('User disconnected');
 	});
+
+	
+		// chat and whiteboard start
+        const getRoomId=(userOneId,userTwoId)=>{
+			const roomId = [userOneId, userTwoId].sort().join('_');
+			return roomId;	
+		}
+		socket.on('join_or_create_room', ({ userOneId, userTwoId }) => {
+		
+			const roomId = [userOneId, userTwoId].sort().join('_');	
+			console.log(roomId);
+			let room = rooms.get(roomId);		
+			if (!room) {
+				room = {
+					userMoves: new Map([[socket.id, []]]),
+					drawed: [],
+					users: new Map([[socket.id, userOneId]])
+				};
+				rooms.set(roomId, room);
+				io.to(socket.id).emit('created', roomId);
+			} else{
+				socket.join(roomId);
+				room.users.set(socket.id, userOneId);
+				room.userMoves.set(socket.id, []);		
+				io.to(socket.id).emit('joined', roomId);
+				
+			}
+			console.log(rooms);
+		});
+
+
+		socket.on('send_msg',({userOneId,userTwoId,msg})=>{
+			console.log(msg);
+			console.log(socket.id);
+			console.log(getRoomId(userOneId,userTwoId));
+			io.to(getRoomId(userOneId,userTwoId)).emit('new_msg',socket.id,msg)
+		})
+		
+		
+
+		// ends
 
 	socket.on('joinRoom', ({ userId, room }) => {
 		socket.join(room);
